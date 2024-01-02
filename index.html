@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Circle Channel</title>
+    </head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #333;
+            color: white;
+            padding-top: 50px;
+        }
+        h1 {
+            text-align: center;
+            animation: animasi 0.5s infinite;
+            cursor: pointer;
+        }
+        @keyframes animasi {
+            0% {
+                font-size: 25px;
+            }
+            50% {
+                font-size: 26px;
+            }
+            100% {
+                font-size: 25px;
+            }
+        }
+        .circle {
+            position: fixed;
+            top: 50%;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+        .blue {
+            background-color: rgb(215, 254, 255);
+            z-index: 5;
+            box-shadow: 0px 0px 100px 0px rgb(103, 101, 255);
+        }
+        .red {
+            background-color: crimson;
+            z-index: 4;
+        }
+        .green {
+            background-color: rgb(144, 255, 144);
+            z-index: 3;
+        }
+        .purple {
+            background-color: rgb(255, 164, 214);
+            z-index: 2;
+        }
+        .black {
+            background-color: #333;
+            z-index: 1;
+            box-shadow: 0px 0px 100px 0px crimson;
+        }
+    </style>
+    <body>
+        <h1>CIRCLE CHANNEL</h1>
+        <div class="circle blue"></div>
+        <div class="circle red"></div>
+        <div class="circle green"></div>
+        <div class="circle purple"></div>
+        <div class="circle black"></div>
+
+        <script>
+            const circleChannel = new BroadcastChannel("circle_channel");
+            const circles = document.querySelectorAll(".circle");
+            let delay;
+
+            function circleMovements(event) {
+                delay = 10;
+                const x = event.clientX;
+                const y = event.clientY;
+
+                circles.forEach((circle) => {
+                    setTimeout(() => {
+                        circle.style.top = y + "px";
+                        circle.style.left = x + "px";
+                        circle.style.right = "";
+                    }, delay);
+                    delay *= 2;
+                });
+                circleChannel.postMessage({ x, y });
+            }
+
+            circleChannel.onmessage = (event) => {
+                const { x, y } = event.data;
+                delay = 10;
+
+                circles.forEach((circle) => {
+                    setTimeout(() => {
+                        circle.style.top = y + "px";
+                        circle.style.left = "";
+                        circle.style.right = x + "px";
+                    }, delay);
+                    delay *= 2;
+                });
+            };
+
+            addEventListener("mousemove", circleMovements);
+        </script>
+    </body>
+</html>
